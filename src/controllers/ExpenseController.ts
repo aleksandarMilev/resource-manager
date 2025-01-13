@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { CreateExpenseUseCase } from '../useCases/CreateExpenseUseCase'
+import { expenseSchema } from '../validators/expenseValidation'
 
 export class ExpenseController {
     private createUseCase: CreateExpenseUseCase
@@ -9,6 +10,13 @@ export class ExpenseController {
     }
 
     async createExpense(req: Request, res: Response): Promise<void> {
+        const { error } = expenseSchema.validate(req.body)
+
+        if (error) {
+            res.status(400).json({ error: error.details[0].message })
+            return
+        }
+
         const { amount, category, description, date } = req.body
 
         try {
