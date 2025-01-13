@@ -54,7 +54,7 @@ export class ExpenseRepository implements IExpenseRepository {
             where: {
                 date: {
                     gte: startDate,
-                    lte: endDate,
+                    lte: endDate
                 }
             }
         })

@@ -15,6 +15,7 @@ export class ExpenseController {
             const expense = await this.createUseCase.execute(amount, category, description, new Date(date))
             res.status(201).json(expense)
         } catch (error) {
+            console.log(error)
             res.status(500).json({ error: 'Failed to create expense' })
         }
     }
