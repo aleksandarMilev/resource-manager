@@ -1,12 +1,12 @@
 import { PrismaClient } from '@prisma/client'
 import { Expense } from '../entities/Expense'
-import { IExpenseRepository } from './IExpsenseRepository'
+import { IExpenseRepository } from './IExpenseRepository'
 
 export class ExpenseRepository implements IExpenseRepository {
     private prisma: PrismaClient
 
-    constructor() {
-        this.prisma = new PrismaClient()
+    constructor(prisma: PrismaClient) {
+        this.prisma = prisma
     }
 
     async create(expense: Expense): Promise<Expense> {
@@ -35,7 +35,7 @@ export class ExpenseRepository implements IExpenseRepository {
 
     async delete(id: string): Promise<void> {
         await this.prisma.expense.delete({
-            where: { id },
+            where: { id }
         })
     }
 
@@ -49,14 +49,14 @@ export class ExpenseRepository implements IExpenseRepository {
 
         const total = await this.prisma.expense.aggregate({
             _sum: {
-                amount: true,
+                amount: true
             },
             where: {
                 date: {
                     gte: startDate,
                     lte: endDate,
-                },
-            },
+                }
+            }
         })
 
         return total._sum.amount || 0
