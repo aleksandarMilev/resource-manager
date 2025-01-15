@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
-import { CreateExpenseUseCase } from '../useCases/CreateExpenseUseCase'
-import { expenseSchema } from '../validators/expenseValidation'
+import { CreateExpenseUseCase } from '../use-cases/CreateExpenseUseCase'
+import { expenseSchema } from '../validators/ExpenseValidation'
 
 export class ExpenseController {
     private createUseCase: CreateExpenseUseCase

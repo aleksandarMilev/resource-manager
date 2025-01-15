@@ -1,23 +1,14 @@
 import express from 'express'
-import { PrismaClient } from '@prisma/client'
-import { ExpenseRepository } from './repositories/ExpenseRepository'
-import { CreateExpenseUseCase } from './useCases/CreateExpenseUseCase'
-import { ExpenseController } from './controllers/ExpenseController'
+import dotenv from 'dotenv'
+import routes from './routes/expense/ExpenseRoutes'
 
-const prisma = new PrismaClient()
-const expenseRepository = new ExpenseRepository(prisma)
-const createExpenseUseCase = new CreateExpenseUseCase(expenseRepository)
-
-const expenseController = new ExpenseController(createExpenseUseCase)
+dotenv.config()
 
 const app = express()
 
-app.use(express.json())
-
-app.post('/expenses', (req, res) => expenseController.createExpense(req, res))
+app
+    .use(express.json())
+    .use('/api/expense', routes)  
 
 const port = process.env.PORT || 3000
-
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`)
-})
+app.listen(port)
