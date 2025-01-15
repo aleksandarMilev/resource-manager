@@ -3,7 +3,7 @@ import { Expense } from '../../entities/expense/Expense'
 import { IExpenseRepository } from './IExpenseRepository'
 
 export class ExpenseRepository implements IExpenseRepository {
-    private prisma: PrismaClient
+    private readonly prisma: PrismaClient
 
     constructor(prisma: PrismaClient) {
         this.prisma = prisma
@@ -21,6 +21,7 @@ export class ExpenseRepository implements IExpenseRepository {
         })
 
         return new Expense(
+            newExpense.id,
             newExpense.amount,
             newExpense.category,
             newExpense.description,
@@ -30,7 +31,7 @@ export class ExpenseRepository implements IExpenseRepository {
 
     async all(): Promise<Expense[]> {
         const expenses = await this.prisma.expense.findMany()
-        return expenses.map(e => new Expense(e.amount, e.category, e.description, e.date))
+        return expenses.map(e => new Expense(e.id, e.amount, e.category, e.description, e.date))
     }
 
     async delete(id: string): Promise<void> {
