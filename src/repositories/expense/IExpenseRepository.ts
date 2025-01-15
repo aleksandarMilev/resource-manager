@@ -1,4 +1,4 @@
-import { Expense } from '../entities/Expense'
+import { Expense } from '../../entities/expense/Expense'
 
 export interface IExpenseRepository {
     all(): Promise<Expense[]>

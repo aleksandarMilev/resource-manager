@@ -1,5 +1,5 @@
-import { Expense } from '../entities/Expense'
-import { IExpenseRepository } from '../repositories/IExpenseRepository'
+import { Expense } from '../../entities/expense/Expense'
+import { IExpenseRepository } from '../../repositories/expense/IExpenseRepository'
 
 export class CreateExpenseUseCase {
     private expenseRepository: IExpenseRepository

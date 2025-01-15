@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { Expense } from '../entities/Expense'
+import { Expense } from '../../entities/expense/Expense'
 import { IExpenseRepository } from './IExpenseRepository'
 
 export class ExpenseRepository implements IExpenseRepository {
