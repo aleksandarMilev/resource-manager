@@ -2,25 +2,33 @@ import { Request, Response } from 'express'
 import { GetAllExpensesUseCase } from '../../use-cases/expense/GetAllExpensesUseCase'
 import { CreateExpenseUseCase } from '../../use-cases/expense/CreateExpenseUseCase'
 import { DeleteExpenseUseCase } from '../../use-cases/expense/DeleteExpenseUseCase'
-import { log } from 'console'
+import { GetTotalAmountForTheCurrentMonthUseCase } from '../../use-cases/expense/GetTotalAmountForTheCurrentMonthUseCase'
 
 export class ExpenseController {
-    private createUseCase: CreateExpenseUseCase
-    private getAllUseCase: GetAllExpensesUseCase
-    private deleteUseCase: DeleteExpenseUseCase
+    private readonly getAllUseCase: GetAllExpensesUseCase
+    private readonly getTotalAmountForCurrentMonthUseCase: GetTotalAmountForTheCurrentMonthUseCase
+    private readonly createUseCase: CreateExpenseUseCase
+    private readonly deleteUseCase: DeleteExpenseUseCase
 
     constructor(
-        createUseCase: CreateExpenseUseCase,
         getAllUseCase: GetAllExpensesUseCase,
+        getTotalAmountForCurrentMonthUseCase: GetTotalAmountForTheCurrentMonthUseCase,
+        createUseCase: CreateExpenseUseCase,
         deleteUseCase: DeleteExpenseUseCase
     ) {
-        this.createUseCase = createUseCase
         this.getAllUseCase = getAllUseCase
+        this.getTotalAmountForCurrentMonthUseCase = getTotalAmountForCurrentMonthUseCase,
+        this.createUseCase = createUseCase,
         this.deleteUseCase = deleteUseCase
     }
 
     async getAll(req: Request, res: Response): Promise<void> {
         const expense = await this.getAllUseCase.execute()
+        res.status(200).json(expense)
+    }
+
+    async getTotalAmountForCurrentMonth(req: Request, res: Response): Promise<void> {
+        const expense = await this.getTotalAmountForCurrentMonthUseCase.execute()
         res.status(200).json(expense)
     }
 
