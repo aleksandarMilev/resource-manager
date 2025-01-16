@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { Expense } from '../../entities/expense/Expense'
 import { IExpenseRepository } from './IExpenseRepository'
+import { ExpenseOutputModel } from './models/ExpenseOutputModel'
 
 export class ExpenseRepository implements IExpenseRepository {
     private readonly prisma: PrismaClient
@@ -9,35 +10,52 @@ export class ExpenseRepository implements IExpenseRepository {
         this.prisma = prisma
     }
 
-    async create(expense: Expense): Promise<Expense> {
-        const newExpense = await this.prisma.expense.create({
+    async create(expense: Expense): Promise<ExpenseOutputModel> {
+        await this.prisma.expense.create({
             data: {
-                id: expense.id,
-                amount: expense.amount,
-                category: expense.category,
-                description: expense.description,
-                date: expense.date
+                id: expense.Id,
+                amount: expense.Amount,
+                category: expense.Category,
+                description: expense.Description,
+                date: expense.Date
             }
         })
 
-        return new Expense(
-            newExpense.id,
-            newExpense.amount,
-            newExpense.category,
-            newExpense.description,
-            newExpense.date
+        return new ExpenseOutputModel(
+            expense.Id,
+            expense.Amount,
+            expense.Category, 
+            expense.Description, 
+            expense.Date.toISOString().split('T')[0]
         )
     }
 
-    async all(): Promise<Expense[]> {
+    async all(): Promise<ExpenseOutputModel[]> {
         const expenses = await this.prisma.expense.findMany()
-        return expenses.map(e => new Expense(e.id, e.amount, e.category, e.description, e.date))
+
+        return expenses.map(e => new ExpenseOutputModel(
+            e.id,
+            e.amount,
+            e.category, 
+            e.description, 
+            e.date.toISOString().split('T')[0]
+        ))
     }
 
-    async delete(id: string): Promise<void> {
+    async delete(id: string): Promise<boolean> {
+        const expense = await this.prisma.expense.findFirst({
+            where: { id }
+        })
+
+        if(!expense){
+            return false
+        }
+
         await this.prisma.expense.delete({
             where: { id }
         })
+
+        return true
     }
 
     async totalForCurrentMonth(): Promise<number> {

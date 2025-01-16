@@ -9,13 +9,13 @@ import { DeleteExpenseUseCase } from '../../use-cases/expense/DeleteExpenseUseCa
 import { GetTotalAmountForTheCurrentMonthUseCase } from '../../use-cases/expense/GetTotalAmountForTheCurrentMonthUseCase'
 
 const prisma = new PrismaClient()
-const expenseRepository = new ExpenseRepository(prisma)
+const repository = new ExpenseRepository(prisma)
 
 const expenseController = new ExpenseController(
-    new GetAllExpensesUseCase(expenseRepository),
-    new GetTotalAmountForTheCurrentMonthUseCase(expenseRepository),
-    new CreateExpenseUseCase(expenseRepository),
-    new DeleteExpenseUseCase(expenseRepository))
+    new GetAllExpensesUseCase(repository),
+    new GetTotalAmountForTheCurrentMonthUseCase(repository),
+    new CreateExpenseUseCase(repository),
+    new DeleteExpenseUseCase(repository))
 
 const router = express.Router()
 

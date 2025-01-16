@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import { GetAllExpensesUseCase } from '../../use-cases/expense/GetAllExpensesUseCase'
+import { GetTotalAmountForTheCurrentMonthUseCase } from '../../use-cases/expense/GetTotalAmountForTheCurrentMonthUseCase'
 import { CreateExpenseUseCase } from '../../use-cases/expense/CreateExpenseUseCase'
 import { DeleteExpenseUseCase } from '../../use-cases/expense/DeleteExpenseUseCase'
-import { GetTotalAmountForTheCurrentMonthUseCase } from '../../use-cases/expense/GetTotalAmountForTheCurrentMonthUseCase'
 
 export class ExpenseController {
     private readonly getAllUseCase: GetAllExpensesUseCase
@@ -23,13 +23,13 @@ export class ExpenseController {
     }
 
     async getAll(req: Request, res: Response): Promise<void> {
-        const expense = await this.getAllUseCase.execute()
-        res.status(200).json(expense)
+        const expenses = await this.getAllUseCase.execute()
+        res.status(200).json(expenses)
     }
 
     async getTotalAmountForCurrentMonth(req: Request, res: Response): Promise<void> {
-        const expense = await this.getTotalAmountForCurrentMonthUseCase.execute()
-        res.status(200).json(expense)
+        const amount = await this.getTotalAmountForCurrentMonthUseCase.execute()
+        res.status(200).json({ total: amount })
     }
 
     async create(req: Request, res: Response): Promise<void> {
@@ -40,7 +40,12 @@ export class ExpenseController {
     }
 
     async delete(req: Request, res: Response): Promise<void> {
-        await this.deleteUseCase.execute(req.params.id)
-        res.status(204).end()
+        const success = await this.deleteUseCase.execute(req.params.id)
+
+        if(success){
+            res.status(204).end()
+        } else {
+            res.status(400).json({ errorMessage: "Invalid Id. Unable to delete the record." })
+        }
     }
 }
