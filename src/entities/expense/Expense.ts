@@ -12,6 +12,8 @@ export class Expense {
         description: string, 
         date: Date
     ) {
+        Expense.ValidateAmount(amount)
+
         this.id = id
         this.amount = amount
         this.category = category
@@ -37,5 +39,11 @@ export class Expense {
 
     public get Date(): Date {
         return this.date
+    }
+
+    private static ValidateAmount(amount: number): void {
+        if (amount <= 0) {
+            throw new Error('Amount should be a positive value')
+        }
     }
 }

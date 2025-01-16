@@ -2,7 +2,7 @@ import Joi from 'joi'
 import { Request, Response, NextFunction } from 'express'
 
 const expenseSchema = Joi.object({
-    amount: Joi.number().required(),
+    amount: Joi.number().positive().required(),
     category: Joi.string().required(),
     description: Joi.string().required(),
     date: Joi.date().required()

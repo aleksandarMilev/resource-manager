@@ -1,9 +1,9 @@
 export class ExpenseOutputModel {
-    private readonly id: string
-    private readonly amount: number
-    private readonly category: string
-    private readonly description: string
-    private readonly date: string
+    readonly id: string
+    readonly amount: number
+    readonly category: string
+    readonly description: string
+    readonly date: string
 
     constructor(
         id: string,
