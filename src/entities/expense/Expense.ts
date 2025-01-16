@@ -20,22 +20,22 @@ export class Expense {
     }
 
     public get Id(): string {
-        return this.id;
+        return this.id
     }
 
     public get Amount(): number {
-        return this.amount;
+        return this.amount
     }
 
     public get Category(): string {
-        return this.category;
+        return this.category
     }
 
     public get Description(): string {
-        return this.description;
+        return this.description
     }
 
     public get Date(): Date {
-        return this.date;
+        return this.date
     }
 }

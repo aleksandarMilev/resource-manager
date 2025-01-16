@@ -19,9 +19,9 @@ const expenseController = new ExpenseController(
 
 const router = express.Router()
 
-router.get('/', (req, res) => expenseController.getAll(req, res))
-router.get('/total', (req, res) => expenseController.getTotalAmountForCurrentMonth(req, res))
-router.post('/', validateExpenseMiddleware, (req, res) => expenseController.create(req, res))
-router.delete('/:id', (req, res) => expenseController.delete(req, res))
+router.get('/', (req, res, next) => expenseController.getAll(req, res, next))
+router.get('/total', (req, res, next) => expenseController.getTotalAmountForCurrentMonth(req, res, next))
+router.post('/', validateExpenseMiddleware, (req, res, next) => expenseController.create(req, res, next))
+router.delete('/:id', (req, res, next) => expenseController.delete(req, res, next))
 
 export default router
