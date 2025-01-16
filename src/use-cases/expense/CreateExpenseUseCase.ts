@@ -10,7 +10,12 @@ export class CreateExpenseUseCase {
         this.repository = repository
     }
 
-    async execute(amount: number, category: string, description: string, date: Date): Promise<ExpenseOutputModel> {
+    async execute(
+        amount: number, 
+        category: string, 
+        description: string, 
+        date: Date
+    ): Promise<ExpenseOutputModel> {
         const expense = new Expense(uuidv4(), amount, category, description, date)
         return await this.repository.create(expense)
     }

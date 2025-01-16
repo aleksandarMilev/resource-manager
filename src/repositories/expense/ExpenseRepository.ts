@@ -10,26 +10,6 @@ export class ExpenseRepository implements IExpenseRepository {
         this.prisma = prisma
     }
 
-    async create(expense: Expense): Promise<ExpenseOutputModel> {
-        await this.prisma.expense.create({
-            data: {
-                id: expense.Id,
-                amount: expense.Amount,
-                category: expense.Category,
-                description: expense.Description,
-                date: expense.Date
-            }
-        })
-
-        return new ExpenseOutputModel(
-            expense.Id,
-            expense.Amount,
-            expense.Category, 
-            expense.Description, 
-            expense.Date.toISOString().split('T')[0]
-        )
-    }
-
     async all(): Promise<ExpenseOutputModel[]> {
         const expenses = await this.prisma.expense.findMany()
 
@@ -42,23 +22,7 @@ export class ExpenseRepository implements IExpenseRepository {
         ))
     }
 
-    async delete(id: string): Promise<boolean> {
-        const expense = await this.prisma.expense.findFirst({
-            where: { id }
-        })
-
-        if(!expense){
-            return false
-        }
-
-        await this.prisma.expense.delete({
-            where: { id }
-        })
-
-        return true
-    }
-
-    async totalForCurrentMonth(): Promise<number> {
+    async totalAmountForTheCurrentMonth(): Promise<number> {
         const startDate = new Date(
             new Date().getFullYear(), 
             new Date().getMonth(), 
@@ -79,5 +43,41 @@ export class ExpenseRepository implements IExpenseRepository {
         })
 
         return total._sum.amount || 0
+    }
+
+    async create(expense: Expense): Promise<ExpenseOutputModel> {
+        await this.prisma.expense.create({
+            data: {
+                id: expense.Id,
+                amount: expense.Amount,
+                category: expense.Category,
+                description: expense.Description,
+                date: expense.Date
+            }
+        })
+
+        return new ExpenseOutputModel(
+            expense.Id,
+            expense.Amount,
+            expense.Category, 
+            expense.Description, 
+            expense.Date.toISOString().split('T')[0]
+        )
+    }
+
+    async delete(id: string): Promise<boolean> {
+        const expense = await this.prisma.expense.findFirst({
+            where: { id }
+        })
+
+        if(!expense){
+            return false
+        }
+
+        await this.prisma.expense.delete({
+            where: { id }
+        })
+
+        return true
     }
 }

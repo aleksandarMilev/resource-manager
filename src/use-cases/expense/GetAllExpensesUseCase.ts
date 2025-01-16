@@ -1,14 +1,14 @@
-import { Expense } from '../../entities/expense/Expense'
 import { IExpenseRepository } from '../../repositories/expense/IExpenseRepository'
+import { ExpenseOutputModel } from '../../repositories/expense/models/ExpenseOutputModel'
 
 export class GetAllExpensesUseCase {
     private readonly repository: IExpenseRepository
 
-    constructor(expenseRepository: IExpenseRepository) {
-        this.repository = expenseRepository
+    constructor(repository: IExpenseRepository) {
+        this.repository = repository
     }
 
-    async execute(): Promise<Expense[]> {
+    async execute(): Promise<ExpenseOutputModel[]> {
         return await this.repository.all()
     }
 }

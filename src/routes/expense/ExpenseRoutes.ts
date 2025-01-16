@@ -15,13 +15,26 @@ const expenseController = new ExpenseController(
     new GetAllExpensesUseCase(repository),
     new GetTotalAmountForTheCurrentMonthUseCase(repository),
     new CreateExpenseUseCase(repository),
-    new DeleteExpenseUseCase(repository))
+    new DeleteExpenseUseCase(repository)
+)
 
 const router = express.Router()
 
-router.get('/', (req, res, next) => expenseController.getAll(req, res, next))
-router.get('/total', (req, res, next) => expenseController.getTotalAmountForCurrentMonth(req, res, next))
-router.post('/', validateExpenseMiddleware, (req, res, next) => expenseController.create(req, res, next))
-router.delete('/:id', (req, res, next) => expenseController.delete(req, res, next))
+router.get(
+    '/',
+    (req, res, next) => expenseController.getAll(req, res, next))
+    
+router.get(
+    '/total', 
+    (req, res, next) => expenseController.getTotalAmountForCurrentMonth(req, res, next))
+
+router.post(
+    '/', 
+    validateExpenseMiddleware, 
+    (req, res, next) => expenseController.create(req, res, next))
+
+router.delete(
+    '/:id', 
+    (req, res, next) => expenseController.delete(req, res, next))
 
 export default router

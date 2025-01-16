@@ -3,8 +3,8 @@ import { IExpenseRepository } from '../../repositories/expense/IExpenseRepositor
 export class DeleteExpenseUseCase {
     private readonly repository: IExpenseRepository
 
-    constructor(expenseRepository: IExpenseRepository) {
-        this.repository = expenseRepository
+    constructor(repository: IExpenseRepository) {
+        this.repository = repository
     }
 
     async execute(id: string): Promise<boolean> {

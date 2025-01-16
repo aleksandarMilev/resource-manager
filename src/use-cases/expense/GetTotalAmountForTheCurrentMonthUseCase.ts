@@ -3,11 +3,11 @@ import { IExpenseRepository } from '../../repositories/expense/IExpenseRepositor
 export class GetTotalAmountForTheCurrentMonthUseCase {
     private readonly repository: IExpenseRepository
 
-    constructor(expenseRepository: IExpenseRepository) {
-        this.repository = expenseRepository
+    constructor(repository: IExpenseRepository) {
+        this.repository = repository
     }
 
     async execute(): Promise<number> {
-        return await this.repository.totalForCurrentMonth()
+        return await this.repository.totalAmountForTheCurrentMonth()
     }
 }
