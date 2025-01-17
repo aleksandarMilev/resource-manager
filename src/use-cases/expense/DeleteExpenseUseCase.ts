@@ -7,7 +7,7 @@ export class DeleteExpenseUseCase {
         this.repository = repository
     }
 
-    async execute(id: string): Promise<boolean> {
-        return await this.repository.delete(id)
+    async execute(expenseId: string, userId: string): Promise<boolean> {
+        return await this.repository.delete(expenseId, userId)
     }
 }

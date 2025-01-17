@@ -24,7 +24,8 @@ export class ExpenseController {
 
     async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const expenses = await this.getAllUseCase.execute()
+            const userId = ExpenseController.GetUserId(req)
+            const expenses = await this.getAllUseCase.execute(userId)
             res.status(200).json(expenses)
         } catch (error) {
             next(error)
@@ -33,7 +34,8 @@ export class ExpenseController {
 
     async getTotalAmountForCurrentMonth(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const amount = await this.getTotalAmountForCurrentMonthUseCase.execute()
+            const userId = ExpenseController.GetUserId(req)
+            const amount = await this.getTotalAmountForCurrentMonthUseCase.execute(userId)
             res.status(200).json({ total: amount })
         } catch (error) {
             next(error)
@@ -42,7 +44,7 @@ export class ExpenseController {
 
     async create(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const userId = req?.user?.id
+            const userId = ExpenseController.GetUserId(req)
             const { amount, category, description, date } = req.body
     
             const expense = await this.createUseCase.execute(
@@ -50,7 +52,7 @@ export class ExpenseController {
                 category,
                 description,
                 new Date(date),
-                userId!
+                userId
             )
     
             res.status(201).json(expense)
@@ -61,7 +63,9 @@ export class ExpenseController {
 
     async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const success = await this.deleteUseCase.execute(req.params.id)
+            const expenseId = req.params.id
+            const userId = ExpenseController.GetUserId(req)
+            const success = await this.deleteUseCase.execute(expenseId, userId)
 
             if (success) {
                 res.status(204).end()
@@ -72,4 +76,8 @@ export class ExpenseController {
             next(error)
         }
     }
+
+    private static GetUserId(req: Request): string {
+        return req?.user?.id!
+    }   
 }

@@ -7,7 +7,7 @@ export class GetTotalAmountForTheCurrentMonthUseCase {
         this.repository = repository
     }
 
-    async execute(): Promise<number> {
-        return await this.repository.totalAmountForTheCurrentMonth()
+    async execute(userId: string): Promise<number> {
+        return await this.repository.totalAmountForTheCurrentMonth(userId)
     }
 }

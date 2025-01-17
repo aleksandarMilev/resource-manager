@@ -8,7 +8,7 @@ export class GetAllExpensesUseCase {
         this.repository = repository
     }
 
-    async execute(): Promise<ExpenseOutputModel[]> {
-        return await this.repository.all()
+    async execute(userId: string): Promise<ExpenseOutputModel[]> {
+        return await this.repository.all(userId)
     }
 }

@@ -10,8 +10,10 @@ export class ExpenseRepository implements IExpenseRepository {
         this.prisma = prisma
     }
 
-    async all(): Promise<ExpenseOutputModel[]> {
-        const expenses = await this.prisma.expense.findMany()
+    async all(userId: string): Promise<ExpenseOutputModel[]> {
+        const expenses = await this.prisma.expense.findMany({
+            where: { userId: userId } 
+        })
 
         type Expense = { id: string; amount: number; category: string; description: string; date: Date }
 
@@ -27,7 +29,7 @@ export class ExpenseRepository implements IExpenseRepository {
         )
     }
 
-    async totalAmountForTheCurrentMonth(): Promise<number> {
+    async totalAmountForTheCurrentMonth(userId: string): Promise<number> {
         const startDate = new Date(
             new Date().getFullYear(), 
             new Date().getMonth(), 
@@ -40,6 +42,7 @@ export class ExpenseRepository implements IExpenseRepository {
                 amount: true
             },
             where: {
+                userId: userId,
                 date: {
                     gte: startDate,
                     lte: endDate
@@ -71,17 +74,17 @@ export class ExpenseRepository implements IExpenseRepository {
         )
     }
 
-    async delete(id: string): Promise<boolean> {
+    async delete(expenseId: string, userId: string): Promise<boolean> {
         const expense = await this.prisma.expense.findFirst({
-            where: { id }
+            where: { expenseId }
         })
 
-        if(!expense){
+        if(!expense || expense.userId !== userId) {
             return false
         }
 
         await this.prisma.expense.delete({
-            where: { id }
+            where: { expenseId }
         })
 
         return true
