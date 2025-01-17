@@ -4,6 +4,7 @@ import { ExpenseController } from '../../controllers/expense/ExpenseController'
 import { CreateExpenseUseCase } from '../../use-cases/expense/CreateExpenseUseCase'
 import { GetAllExpensesUseCase } from '../../use-cases/expense/GetAllExpensesUseCase'
 import { ExpenseRepository } from '../../repositories/expense/ExpenseRepository'
+import { authenticate } from '../../middlewares/user/AuthenticationMiddleware'
 import { validateExpenseMiddleware } from '../../middlewares/expense/validator/ValidateExpenseMiddleware'
 import { DeleteExpenseUseCase } from '../../use-cases/expense/DeleteExpenseUseCase'
 import { GetTotalAmountForTheCurrentMonthUseCase } from '../../use-cases/expense/GetTotalAmountForTheCurrentMonthUseCase'
@@ -19,6 +20,7 @@ const expenseController = new ExpenseController(
 )
 
 const router = express.Router()
+router.use(authenticate)
 
 router.get(
     '/',
