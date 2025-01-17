@@ -42,8 +42,17 @@ export class ExpenseController {
 
     async create(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
+            const userId = req?.user?.id
             const { amount, category, description, date } = req.body
-            const expense = await this.createUseCase.execute(amount, category, description, new Date(date))
+    
+            const expense = await this.createUseCase.execute(
+                amount,
+                category,
+                description,
+                new Date(date),
+                userId!
+            )
+    
             res.status(201).json(expense)
         } catch (error) {
             next(error)
@@ -52,7 +61,7 @@ export class ExpenseController {
 
     async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const success = await this.deleteUseCase.execute(req.params.id);
+            const success = await this.deleteUseCase.execute(req.params.id)
 
             if (success) {
                 res.status(204).end()

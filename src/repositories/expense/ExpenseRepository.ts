@@ -13,13 +13,18 @@ export class ExpenseRepository implements IExpenseRepository {
     async all(): Promise<ExpenseOutputModel[]> {
         const expenses = await this.prisma.expense.findMany()
 
-        return expenses.map(e => new ExpenseOutputModel(
-            e.id,
-            e.amount,
-            e.category, 
-            e.description, 
-            e.date.toISOString().split('T')[0]
-        ))
+        type Expense = { id: string; amount: number; category: string; description: string; date: Date }
+
+        return expenses.map(
+            (e: Expense) => 
+                new ExpenseOutputModel(
+                    e.id, 
+                    e.amount, 
+                    e.category, 
+                    e.description, 
+                    e.date.toISOString().split('T')[0]
+                )
+        )
     }
 
     async totalAmountForTheCurrentMonth(): Promise<number> {
@@ -52,7 +57,8 @@ export class ExpenseRepository implements IExpenseRepository {
                 amount: expense.Amount,
                 category: expense.Category,
                 description: expense.Description,
-                date: expense.Date
+                date: expense.Date,
+                userId: expense.UserId
             }
         })
 

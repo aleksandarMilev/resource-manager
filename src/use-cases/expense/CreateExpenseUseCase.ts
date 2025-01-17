@@ -14,9 +14,10 @@ export class CreateExpenseUseCase {
         amount: number, 
         category: string, 
         description: string, 
-        date: Date
+        date: Date,
+        userId: string
     ): Promise<ExpenseOutputModel> {
-        const expense = new Expense(uuidv4(), amount, category, description, date)
+        const expense = new Expense(uuidv4(), amount, category, description, date, userId)
         return await this.repository.create(expense)
     }
 }

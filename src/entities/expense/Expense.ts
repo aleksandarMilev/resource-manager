@@ -4,13 +4,15 @@ export class Expense {
     private readonly category: string
     private readonly description: string
     private readonly date: Date
+    private readonly userId: string
 
     constructor(
         id: string,
         amount: number, 
         category: string, 
         description: string, 
-        date: Date
+        date: Date,
+        userId: string
     ) {
         Expense.ValidateAmount(amount)
 
@@ -19,6 +21,7 @@ export class Expense {
         this.category = category
         this.description = description
         this.date = date
+        this.userId = userId
     }
 
     public get Id(): string {
@@ -39,6 +42,10 @@ export class Expense {
 
     public get Date(): Date {
         return this.date
+    }
+
+    public get UserId(): string {
+        return this.userId
     }
 
     private static ValidateAmount(amount: number): void {
