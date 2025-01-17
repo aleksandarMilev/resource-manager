@@ -11,7 +11,7 @@ const app = express()
 
 app
     .use(express.json())
-    .use('api/user', userRoutes)
+    .use('/api/user', userRoutes)
     .use('/api/expense', expenseRoutes)
     .use(notFoundHandler)
     .use(globalErrorHandler)
