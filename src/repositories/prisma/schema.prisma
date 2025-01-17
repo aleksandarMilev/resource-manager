@@ -10,7 +10,16 @@ datasource db {
 model Expense {
     id          String  @id @default(uuid())
     amount      Float
-    category    String
-    description String
+    category    String  @db.VarChar(100) 
+    description String  @db.VarChar(2000) 
     date        DateTime
+}
+
+model User {
+    id          String   @id @default(uuid())
+    email       String   @unique
+    password    String
+    role        String   @default("USER")
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 }

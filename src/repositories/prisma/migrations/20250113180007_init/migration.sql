@@ -1,4 +1,3 @@
--- CreateTable
 CREATE TABLE "Expense" (
     "id" TEXT NOT NULL,
     "amount" DOUBLE PRECISION NOT NULL,
