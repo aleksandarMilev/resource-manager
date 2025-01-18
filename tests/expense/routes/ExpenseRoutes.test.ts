@@ -1,17 +1,23 @@
 import express from 'express'
 import request from 'supertest'
-import { ExpenseController } from '../../src/controllers/expense/ExpenseController'
-import { GetAllExpensesUseCase } from '../../src/use-cases/expense/GetAllExpensesUseCase'
-import { GetTotalAmountForTheCurrentMonthUseCase } from '../../src/use-cases/expense/GetTotalAmountForTheCurrentMonthUseCase'
-import { CreateExpenseUseCase } from '../../src/use-cases/expense/CreateExpenseUseCase'
-import { DeleteExpenseUseCase } from '../../src/use-cases/expense/DeleteExpenseUseCase'
-import { ExpenseOutputModel } from '../../src/repositories/expense/models/ExpenseOutputModel'
-import { validateExpenseMiddleware } from '../../src/middlewares/expense/validator/ValidateExpenseMiddleware'
+import { ExpenseController } from '../../../src/controllers/expense/ExpenseController'
+import { GetAllExpensesUseCase } from '../../../src/use-cases/expense/GetAllExpensesUseCase'
+import { GetTotalAmountForTheCurrentMonthUseCase } from '../../../src/use-cases/expense/GetTotalAmountForTheCurrentMonthUseCase'
+import { CreateExpenseUseCase } from '../../../src/use-cases/expense/CreateExpenseUseCase'
+import { DeleteExpenseUseCase } from '../../../src/use-cases/expense/DeleteExpenseUseCase'
+import { ExpenseOutputModel } from '../../../src/repositories/expense/models/ExpenseOutputModel'
+import { validateExpenseMiddleware } from '../../../src/middlewares/expense/validator/ValidateExpenseMiddleware'
+import authenticationMiddleware from '../../../src/middlewares/user/AuthenticationMiddleware'
 
-jest.mock('../../src/repositories/expense/ExpenseRepository')
+jest.mock('../../../src/repositories/expense/ExpenseRepository')
 
-jest.mock('../../src/middlewares/expense/validator/ValidateExpenseMiddleware', () => ({
+jest.mock('../../../src/middlewares/expense/validator/ValidateExpenseMiddleware', () => ({
     validateExpenseMiddleware: jest.fn((req, res, next) => next())
+}))
+
+jest.mock('../../../src/middlewares/user/AuthenticationMiddleware', () => jest.fn((req, res, next) => {
+    req.user = { id: 'user-123' } 
+    next()
 }))
 
 const app = express()
@@ -32,6 +38,7 @@ const expenseController = new ExpenseController(
     new DeleteExpenseUseCase(mockRepository as any)
 )
 
+app.use('/expenses', authenticationMiddleware) 
 app.get('/expenses', (req, res, next) => expenseController.getAll(req, res, next))
 app.get('/expenses/total', (req, res, next) => expenseController.getTotalAmountForCurrentMonth(req, res, next))
 app.post('/expenses', validateExpenseMiddleware, (req, res, next) => expenseController.create(req, res, next))
@@ -56,11 +63,11 @@ describe('Expense Routes', () => {
         expect(response.body).toEqual(mockExpenses)
     })
 
-    it('GET /expenses - should return empty list if no expenses exist', async () => {
+    it('GET /expenses - should return empty array if no expenses exist', async () => {
         mockRepository.all.mockResolvedValue([])
-    
+
         const response = await request(app).get('/expenses')
-    
+
         expect(response.status).toBe(200)
         expect(response.body).toEqual([])
     })
@@ -98,7 +105,7 @@ describe('Expense Routes', () => {
         expect(response.body).toEqual(mockExpense)
     })
 
-    it('DELETE /expenses/:id - should delete an expense', async () => {
+    it('DELETE /expenses/:id - should delete expense', async () => {
         mockRepository.delete.mockResolvedValue(true)
 
         const response = await request(app).delete('/expenses/123')
@@ -106,14 +113,14 @@ describe('Expense Routes', () => {
         expect(response.status).toBe(204)
     })
 
-    it('DELETE /expenses/:id - should return 400 for invalid delete', async () => {
+    it('DELETE /expenses/:id - should return 400 if id is invalid', async () => {
         mockRepository.delete.mockResolvedValue(false)
 
         const response = await request(app).delete('/expenses/invalid-id')
 
         expect(response.status).toBe(400)
         expect(response.body).toEqual({
-            errorMessage: 'Invalid Id. Unable to delete the record.',
+            errorMessage: 'Invalid Expense Id!'
         })
     })
 })

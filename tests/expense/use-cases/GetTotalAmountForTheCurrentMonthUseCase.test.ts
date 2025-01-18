@@ -1,11 +1,12 @@
-import { IExpenseRepository } from '../../src/repositories/expense/IExpenseRepository'
-import { GetTotalAmountForTheCurrentMonthUseCase } from '../../src/use-cases/expense/GetTotalAmountForTheCurrentMonthUseCase'
+import { IExpenseRepository } from '../../../src/repositories/expense/IExpenseRepository'
+import { GetTotalAmountForTheCurrentMonthUseCase } from '../../../src/use-cases/expense/GetTotalAmountForTheCurrentMonthUseCase'
 
-jest.mock('../../src/repositories/expense/IExpenseRepository')
+jest.mock('../../../src/repositories/expense/IExpenseRepository')
 
 describe('GetTotalAmountForTheCurrentMonthUseCase', () => {
     let repositoryMock: jest.Mocked<IExpenseRepository>
     let getTotalAmountForTheCurrentMonthUseCase: GetTotalAmountForTheCurrentMonthUseCase
+    const userId = 'user-123'
 
     beforeEach(() => {
         repositoryMock = {
@@ -24,10 +25,11 @@ describe('GetTotalAmountForTheCurrentMonthUseCase', () => {
 
         repositoryMock.totalAmountForTheCurrentMonth.mockResolvedValue(totalAmount)
 
-        const result = await getTotalAmountForTheCurrentMonthUseCase.execute()
+        const result = await getTotalAmountForTheCurrentMonthUseCase.execute(userId)
 
         expect(result).toBe(totalAmount)
         expect(repositoryMock.totalAmountForTheCurrentMonth).toHaveBeenCalledTimes(1)
+        expect(repositoryMock.totalAmountForTheCurrentMonth).toHaveBeenCalledWith(userId)
     })
 
     it('should return 0 if there are no expenses for the current month', async () => {
@@ -35,9 +37,10 @@ describe('GetTotalAmountForTheCurrentMonthUseCase', () => {
 
         repositoryMock.totalAmountForTheCurrentMonth.mockResolvedValue(totalAmount)
 
-        const result = await getTotalAmountForTheCurrentMonthUseCase.execute()
+        const result = await getTotalAmountForTheCurrentMonthUseCase.execute(userId)
 
         expect(result).toBe(totalAmount)
         expect(repositoryMock.totalAmountForTheCurrentMonth).toHaveBeenCalledTimes(1)
+        expect(repositoryMock.totalAmountForTheCurrentMonth).toHaveBeenCalledWith(userId)
     })
 })

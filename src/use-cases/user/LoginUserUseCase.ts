@@ -13,9 +13,9 @@ export class LoginUserUseCase {
         const user = await this.repository.getUserByEmail(email)
 
         if (user) {
-            const isPasswordValid = await bcrypt.compare(plainPassword, user.password)
+            const passwordIsValid = await bcrypt.compare(plainPassword, user.password)
 
-            if (isPasswordValid) {
+            if (passwordIsValid) {
                 return generateToken(user.id, user.role)
             }
 

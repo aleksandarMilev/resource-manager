@@ -4,6 +4,8 @@ import { GetTotalAmountForTheCurrentMonthUseCase } from '../../use-cases/expense
 import { CreateExpenseUseCase } from '../../use-cases/expense/CreateExpenseUseCase'
 import { DeleteExpenseUseCase } from '../../use-cases/expense/DeleteExpenseUseCase'
 
+const InvalidIdErrorMessage = 'Invalid Expense Id!'
+
 export class ExpenseController {
     private readonly getAllUseCase: GetAllExpensesUseCase
     private readonly getTotalAmountForCurrentMonthUseCase: GetTotalAmountForTheCurrentMonthUseCase
@@ -70,7 +72,7 @@ export class ExpenseController {
             if (success) {
                 res.status(204).end()
             } else {
-                res.status(400).json({ errorMessage: 'Invalid Id. Unable to delete the record.' })
+                res.status(400).json({ errorMessage: InvalidIdErrorMessage })
             }
         } catch (error) {
             next(error)

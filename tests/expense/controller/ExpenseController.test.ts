@@ -1,15 +1,15 @@
 import { Request, Response, NextFunction } from 'express'
-import { ExpenseController } from '../../src/controllers/expense/ExpenseController'
-import { GetAllExpensesUseCase } from '../../src/use-cases/expense/GetAllExpensesUseCase'
-import { GetTotalAmountForTheCurrentMonthUseCase } from '../../src/use-cases/expense/GetTotalAmountForTheCurrentMonthUseCase'
-import { CreateExpenseUseCase } from '../../src/use-cases/expense/CreateExpenseUseCase'
-import { DeleteExpenseUseCase } from '../../src/use-cases/expense/DeleteExpenseUseCase'
-import { ExpenseOutputModel } from '../../src/repositories/expense/models/ExpenseOutputModel'
+import { ExpenseController } from '../../../src/controllers/expense/ExpenseController'
+import { GetAllExpensesUseCase } from '../../../src/use-cases/expense/GetAllExpensesUseCase'
+import { GetTotalAmountForTheCurrentMonthUseCase } from '../../../src/use-cases/expense/GetTotalAmountForTheCurrentMonthUseCase'
+import { CreateExpenseUseCase } from '../../../src/use-cases/expense/CreateExpenseUseCase'
+import { DeleteExpenseUseCase } from '../../../src/use-cases/expense/DeleteExpenseUseCase'
+import { ExpenseOutputModel } from '../../../src/repositories/expense/models/ExpenseOutputModel'
 
-jest.mock('../../src/use-cases/expense/GetAllExpensesUseCase')
-jest.mock('../../src/use-cases/expense/GetTotalAmountForTheCurrentMonthUseCase')
-jest.mock('../../src/use-cases/expense/CreateExpenseUseCase')
-jest.mock('../../src/use-cases/expense/DeleteExpenseUseCase')
+jest.mock('../../../src/use-cases/expense/GetAllExpensesUseCase')
+jest.mock('../../../src/use-cases/expense/GetTotalAmountForTheCurrentMonthUseCase')
+jest.mock('../../../src/use-cases/expense/CreateExpenseUseCase')
+jest.mock('../../../src/use-cases/expense/DeleteExpenseUseCase')
 
 describe('ExpenseController', () => {
     let getAllUseCaseMock: jest.Mocked<GetAllExpensesUseCase>
@@ -20,6 +20,8 @@ describe('ExpenseController', () => {
     let req: Partial<Request>
     let res: Partial<Response>
     let next: jest.Mocked<NextFunction>
+
+    const userId = 'user-123'
 
     beforeEach(() => {
         getAllUseCaseMock = { execute: jest.fn() } as unknown as jest.Mocked<GetAllExpensesUseCase>
@@ -34,7 +36,7 @@ describe('ExpenseController', () => {
             deleteUseCaseMock
         )
 
-        req = { body: {}, params: {} }
+        req = { body: {}, params: { id: '123' }, user: { id: userId } }
         res = { status: jest.fn().mockReturnThis(), json: jest.fn(), end: jest.fn() }
         next = jest.fn()
     })
@@ -54,6 +56,7 @@ describe('ExpenseController', () => {
         await expenseController.getAll(req as Request, res as Response, next)
 
         expect(getAllUseCaseMock.execute).toHaveBeenCalledTimes(1)
+        expect(getAllUseCaseMock.execute).toHaveBeenCalledWith(userId)
         expect(res.status).toHaveBeenCalledWith(200)
         expect(res.json).toHaveBeenCalledWith(mockExpenses)
     })
@@ -66,11 +69,12 @@ describe('ExpenseController', () => {
         await expenseController.getTotalAmountForCurrentMonth(req as Request, res as Response, next)
 
         expect(getTotalAmountUseCaseMock.execute).toHaveBeenCalledTimes(1)
+        expect(getTotalAmountUseCaseMock.execute).toHaveBeenCalledWith(userId)
         expect(res.status).toHaveBeenCalledWith(200)
         expect(res.json).toHaveBeenCalledWith({ total: totalAmount })
     })
 
-    it('should create an expense', async () => {
+    it('should create new expense', async () => {
         const mockExpense = new ExpenseOutputModel('123', 100, 'Food', 'Groceries', '2025-01-01')
         req.body = { amount: 100, category: 'Food', description: 'Groceries', date: '2025-01-01' }
 
@@ -83,38 +87,37 @@ describe('ExpenseController', () => {
             100,
             'Food',
             'Groceries',
-            new Date('2025-01-01')
+            new Date('2025-01-01'),
+            userId
         )
         expect(res.status).toHaveBeenCalledWith(201)
         expect(res.json).toHaveBeenCalledWith(mockExpense)
     })
 
-    it('should delete an expense successfully', async () => {
-        req.params = { id: '123' }
+    it('should delete expense', async () => {
         deleteUseCaseMock.execute.mockResolvedValue(true)
 
         await expenseController.delete(req as Request, res as Response, next)
 
         expect(deleteUseCaseMock.execute).toHaveBeenCalledTimes(1)
-        expect(deleteUseCaseMock.execute).toHaveBeenCalledWith('123')
+        expect(deleteUseCaseMock.execute).toHaveBeenCalledWith('123', userId)
         expect(res.status).toHaveBeenCalledWith(204)
         expect(res.end).toHaveBeenCalled()
     })
 
     it('should handle invalid delete request', async () => {
-        req.params = { id: '123' }
         deleteUseCaseMock.execute.mockResolvedValue(false)
 
         await expenseController.delete(req as Request, res as Response, next)
 
         expect(deleteUseCaseMock.execute).toHaveBeenCalledTimes(1)
-        expect(deleteUseCaseMock.execute).toHaveBeenCalledWith('123')
+        expect(deleteUseCaseMock.execute).toHaveBeenCalledWith('123', userId)
         expect(res.status).toHaveBeenCalledWith(400)
-        expect(res.json).toHaveBeenCalledWith({ errorMessage: 'Invalid Id. Unable to delete the record.' })
+        expect(res.json).toHaveBeenCalledWith({ errorMessage: 'Invalid Expense Id!' })
     })
 
     it('should handle errors', async () => {
-        const error = new Error('Something went wrong')
+        const error = new Error('Something went wrong!')
         getAllUseCaseMock.execute.mockRejectedValue(error)
 
         await expenseController.getAll(req as Request, res as Response, next)

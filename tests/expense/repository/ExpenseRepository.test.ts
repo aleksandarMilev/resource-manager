@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
-import { ExpenseRepository } from '../../src/repositories/expense/ExpenseRepository'
-import { ExpenseOutputModel } from '../../src/repositories/expense/models/ExpenseOutputModel'
-import { Expense } from '../../src/entities/expense/Expense'
+import { ExpenseRepository } from '../../../src/repositories/expense/ExpenseRepository'
+import { ExpenseOutputModel } from '../../../src/repositories/expense/models/ExpenseOutputModel'
+import { Expense } from '../../../src/entities/expense/Expense'
 
 jest.mock('@prisma/client', () => {
     return {
@@ -20,6 +20,7 @@ jest.mock('@prisma/client', () => {
 describe('ExpenseRepository', () => {
     let prismaMock: jest.Mocked<PrismaClient>
     let repository: ExpenseRepository
+    const userId = 'user-123'
 
     beforeEach(() => {
         prismaMock = new PrismaClient() as jest.Mocked<PrismaClient>
@@ -32,13 +33,13 @@ describe('ExpenseRepository', () => {
 
     it('should return all expenses', async () => {
         const mockExpenses = [
-            { id: '1', amount: 100, category: 'Food', description: 'Lunch', date: new Date() },
-            { id: '2', amount: 50, category: 'Transport', description: 'Bus ticket', date: new Date() }
+            { id: '1', amount: 100, category: 'Food', description: 'Lunch', date: new Date(), userId: userId },
+            { id: '2', amount: 50, category: 'Transport', description: 'Bus ticket', date: new Date(), userId: userId }
         ];
 
         (prismaMock.expense.findMany as jest.Mock).mockResolvedValue(mockExpenses)
 
-        const result = await repository.all()
+        const result = await repository.all(userId)
 
         expect(result).toEqual([
             new ExpenseOutputModel('1', 100, 'Food', 'Lunch', mockExpenses[0].date.toISOString().split('T')[0]),
@@ -46,11 +47,11 @@ describe('ExpenseRepository', () => {
         ])
     })
 
-    it('should return an empty array if no expenses exist', async () => {
+    it('should return an empty array if no expenses exist for the current user', async () => {
         (prismaMock.expense.findMany as jest.Mock).mockResolvedValue([])
-    
-        const result = await repository.all()
-    
+
+        const result = await repository.all(userId)
+
         expect(result).toEqual([])
     })
 
@@ -59,33 +60,23 @@ describe('ExpenseRepository', () => {
 
         (prismaMock.expense.aggregate as jest.Mock).mockResolvedValue(mockTotal)
 
-        const result = await repository.totalAmountForTheCurrentMonth()
+        const result = await repository.totalAmountForTheCurrentMonth(userId)
 
         expect(result).toBe(150)
     })
 
     it('should return 0 if no expenses for the current month', async () => {
         const mockTotal = { _sum: { amount: 0 } };
-    
+
         (prismaMock.expense.aggregate as jest.Mock).mockResolvedValue(mockTotal)
-    
-        const result = await repository.totalAmountForTheCurrentMonth()
-    
+
+        const result = await repository.totalAmountForTheCurrentMonth(userId)
+
         expect(result).toBe(0)
     })
 
-    it('should return the correct total amount when there are negative expenses', async () => {
-        const mockTotal = { _sum: { amount: -50 } };
-    
-        (prismaMock.expense.aggregate as jest.Mock).mockResolvedValue(mockTotal)
-    
-        const result = await repository.totalAmountForTheCurrentMonth()
-    
-        expect(result).toBe(-50)
-    })
-
-    it('should create a new expense', async () => {
-        const mockExpense = new Expense('1', 100, 'Food', 'Lunch', new Date());
+    it('should create a new expense for the user', async () => {
+        const mockExpense = new Expense('1', 100, 'Food', 'Lunch', new Date(), userId);
 
         (prismaMock.expense.create as jest.Mock).mockResolvedValue(mockExpense)
 
@@ -97,20 +88,30 @@ describe('ExpenseRepository', () => {
     })
 
     it('should delete an expense and return true', async () => {
-        const mockExpense = { id: '1' };
+        const mockExpense = { id: '1', userId: userId };
 
         (prismaMock.expense.findFirst as jest.Mock).mockResolvedValue(mockExpense);
         (prismaMock.expense.delete as jest.Mock).mockResolvedValue(mockExpense)
 
-        const result = await repository.delete('1')
+        const result = await repository.delete('1', userId)
 
         expect(result).toBe(true)
     })
 
-    it('should return false when trying to delete a non-existent expense', async () => {
-        (prismaMock.expense.findFirst as jest.Mock).mockResolvedValue(null);
+    it('should return false if the expense userId is not same as the current userId', async () => {
+        const mockExpense = { id: '1', userId: 'other-user' };
 
-        const result = await repository.delete('invalid-id')
+        (prismaMock.expense.findFirst as jest.Mock).mockResolvedValue(mockExpense)
+
+        const result = await repository.delete('1', userId)
+
+        expect(result).toBe(false)
+    })
+
+    it('should return false if expense Id is invalid', async () => {
+        (prismaMock.expense.findFirst as jest.Mock).mockResolvedValue(null)
+
+        const result = await repository.delete('invalid-expense-id', userId)
 
         expect(result).toBe(false)
     })

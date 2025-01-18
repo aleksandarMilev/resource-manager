@@ -1,10 +1,11 @@
 export default {
     preset: 'ts-jest',
     testEnvironment: 'node',
-    roots: ['<rootDir>/tests'],
     transform: {
-      '^.+\\.ts$': ['ts-jest', { babelConfig: true }]
+      '^.+\\.ts$': 'ts-jest',
     },
-    testMatch: ['**/tests/**/*.test.ts', '**/tests/*.test.ts']
+    testMatch: [
+      '**/*.test.ts'
+    ]
 }
   

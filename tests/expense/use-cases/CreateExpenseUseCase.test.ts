@@ -1,8 +1,8 @@
-import { CreateExpenseUseCase } from '../../src/use-cases/expense/CreateExpenseUseCase'
-import { ExpenseRepository } from '../../src/repositories/expense/ExpenseRepository'
-import { ExpenseOutputModel } from '../../src/repositories/expense/models/ExpenseOutputModel'
+import { CreateExpenseUseCase } from '../../../src/use-cases/expense/CreateExpenseUseCase'
+import { ExpenseRepository } from '../../../src/repositories/expense/ExpenseRepository'
+import { ExpenseOutputModel } from '../../../src/repositories/expense/models/ExpenseOutputModel'
 
-jest.mock('../../src/repositories/expense/ExpenseRepository')
+jest.mock('../../../src/repositories/expense/ExpenseRepository')
 
 describe('CreateExpenseUseCase', () => {
     let repositoryMock: jest.Mocked<ExpenseRepository>
@@ -17,11 +17,12 @@ describe('CreateExpenseUseCase', () => {
         jest.clearAllMocks()
     })
 
-    it('should create a new expense successfully', async () => {
+    it('should create a new expense', async () => {
         const amount = 100
         const category = 'Food'
         const description = 'Lunch'
         const date = new Date()
+        const userId = 'user-123'
 
         const mockExpenseOutput = new ExpenseOutputModel(
             '123', 
@@ -32,7 +33,7 @@ describe('CreateExpenseUseCase', () => {
 
         repositoryMock.create.mockResolvedValue(mockExpenseOutput)
 
-        const result = await createExpenseUseCase.execute(amount, category, description, date)
+        const result = await createExpenseUseCase.execute(amount, category, description, date, userId)
 
         expect(result).toEqual(mockExpenseOutput)
         expect(repositoryMock.create).toHaveBeenCalledTimes(1)
@@ -41,19 +42,21 @@ describe('CreateExpenseUseCase', () => {
             Amount: amount,
             Category: category,
             Description: description,
-            Date: date
+            Date: date,
+            UserId: userId
         }))
     })
 
-    it('should handle invalid amount (negative value)', async () => {
+    it('should handle invalid amount', async () => {
         const amount = -100
         const category = 'Food'
         const description = 'Lunch'
         const date = new Date()
+        const userId = 'user-123'
 
-        await expect(createExpenseUseCase.execute(amount, category, description, date))
+        await expect(createExpenseUseCase.execute(amount, category, description, date, userId))
             .rejects
-            .toThrow('Amount should be a positive value')
+            .toThrow('Amount should be greater than 0!')
 
         expect(repositoryMock.create).not.toHaveBeenCalled()
     })
