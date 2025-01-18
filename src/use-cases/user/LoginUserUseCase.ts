@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 import { IUserRepository } from '../../repositories/user/IUserRepository'
-import { generateToken } from '../../repositories/user/jwt/Jwt'
+import { generateToken } from '../../repositories/user/jwt-generator/JwtGenerator'
 
 export class LoginUserUseCase {
     private repository: IUserRepository

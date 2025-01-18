@@ -3,8 +3,8 @@ import { PrismaClient } from '@prisma/client'
 import { validateUserCredentialsMiddleware } from '../../middlewares/user/validator/ValidateUserCredentialsMiddleware'
 import { UserController } from '../../controllers/user/UserController'
 import { RegisterUserUseCase } from '../../use-cases/user/RegisterUserUseCase'
-import { UserRepository } from '../../repositories/user/UserRepository'
 import { LoginUserUseCase } from '../../use-cases/user/LoginUserUseCase'
+import { UserRepository } from '../../repositories/user/UserRepository'
 
 const prisma = new PrismaClient()
 const repository = new UserRepository(prisma)
