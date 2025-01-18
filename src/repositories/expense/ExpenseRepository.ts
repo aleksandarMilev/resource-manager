@@ -76,7 +76,7 @@ export class ExpenseRepository implements IExpenseRepository {
 
     async delete(expenseId: string, userId: string): Promise<boolean> {
         const expense = await this.prisma.expense.findFirst({
-            where: { expenseId }
+            where: { id: expenseId }
         })
 
         if(!expense || expense.userId !== userId) {
@@ -84,7 +84,7 @@ export class ExpenseRepository implements IExpenseRepository {
         }
 
         await this.prisma.expense.delete({
-            where: { expenseId }
+            where: { id: expenseId }
         })
 
         return true

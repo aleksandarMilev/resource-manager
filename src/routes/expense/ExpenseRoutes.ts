@@ -27,7 +27,7 @@ router.get(
     (req, res, next) => expenseController.getAll(req, res, next))
     
 router.get(
-    '/total', 
+    '/total',
     (req, res, next) => expenseController.getTotalAmountForCurrentMonth(req, res, next))
 
 router.post(

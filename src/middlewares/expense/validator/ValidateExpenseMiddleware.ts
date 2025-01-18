@@ -3,8 +3,8 @@ import { Request, Response, NextFunction } from 'express'
 
 const expenseSchema = Joi.object({
     amount: Joi.number().positive().required(),
-    category: Joi.string().required(),
-    description: Joi.string().required(),
+    category: Joi.string().min(2).max(100).required(),
+    description: Joi.string().min(2).max(2000).required(),
     date: Joi.date().required()
 })
 

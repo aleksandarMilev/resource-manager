@@ -6,7 +6,7 @@ const userSchema = Joi.object({
     password: Joi.string().min(6).max(50).required()
 })
 
-export function validateUserMiddleware(req: Request, res: Response, next: NextFunction): void {
+export function validateUserCredentialsMiddleware(req: Request, res: Response, next: NextFunction): void {
     const { error } = userSchema.validate(req.body)
 
     if (error) {
