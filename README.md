@@ -39,7 +39,7 @@ It should be something like this:
 ```plaintext
 DATABASE_URL=postgresql://<username>:<password>@localhost:5432/<database_name>
 JWT_SECRET=<your_secret_key>
-JWT_EXPIRES_IN=<expiration_time_in_seconds>
+JWT_EXPIRES_IN=<expiration_time_in_days>
 PORT=<optional_port_number>
 ```
 
@@ -61,6 +61,11 @@ This will apply the latest Prisma migrations to the database.
 npm run dev
 ```
 The app should now be listening on ``http://localhost:3000`` (or the specified PORT value in the ``.env`` file).
+
+### 7.(Optional) If you want to run the tests:
+```bash
+npm test
+```
 
 ## Architecture
 The project is organized into layers to adhere to Clean Architecture principles:
