@@ -1,4 +1,4 @@
-import { PrismaClient, User } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { UserRepository } from '../../../src/repositories/user/UserRepository'
 
 jest.mock('@prisma/client', () => {
@@ -52,7 +52,7 @@ describe('UserRepository', () => {
             password: 'hashedpassword',
             role,
             createdAt: new Date()
-        } as User)
+        })
 
         const result = await repository.createUser(email, password, role)
 
@@ -66,7 +66,7 @@ describe('UserRepository', () => {
             password: 'hashedpassword',
             role,
             createdAt: new Date(),
-        } as User);
+        });
 
         (prismaMock.user.delete as jest.Mock).mockResolvedValue({
             email,
@@ -91,12 +91,9 @@ describe('UserRepository', () => {
     })
 
     it('should return a user by email', async () => {
-        const mockUser: User = {
-            email,
+        const mockUser = {
             password: 'hashedpassword',
             role,
-            createdAt: new Date(),
-            updatedAt: new Date(),
             id: 'user-1'
         };
 

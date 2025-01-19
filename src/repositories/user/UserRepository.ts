@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import { PrismaClient, User } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { IUserRepository } from './IUserRepository'
 
 export class UserRepository implements IUserRepository {
@@ -44,9 +44,19 @@ export class UserRepository implements IUserRepository {
         return false 
     }
 
-    async getUserByEmail(email: string): Promise<User | null> {
-        return await this.prisma.user.findUnique({
+    async getUserByEmail(email: string): Promise<any | null> {
+        const user = await this.prisma.user.findUnique({
             where: { email }
         })
+
+        if(user){
+            return {
+                password: user.password,
+                id: user.id,
+                role: user.role
+            }
+        }
+
+        return null
     }
 }

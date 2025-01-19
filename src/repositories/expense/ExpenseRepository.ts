@@ -33,9 +33,14 @@ export class ExpenseRepository implements IExpenseRepository {
         const startDate = new Date(
             new Date().getFullYear(), 
             new Date().getMonth(), 
-            1)
+            1
+        )
             
-        const endDate = new Date()
+        const endDate = new Date(
+            new Date().getFullYear(), 
+            new Date().getMonth() + 1
+        )
+        
 
         const total = await this.prisma.expense.aggregate({
             _sum: {
