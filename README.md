@@ -123,7 +123,7 @@ All expense endpoints are authenticated, so the server will expect the following
 Authorization: Bearer <your_token>
 ```
 
-#### 1. **POST api/expense**
+#### 1. **POST /api/expense**
 Adds a new expense.
 
 ##### Request Body:
@@ -146,7 +146,7 @@ Adds a new expense.
     "date": "2025-01-19"
 }
 ```
-#### 2. **GET api/expense**
+#### 2. **GET /api/expense**
 Returns all expenses for the current user.
 
 ##### Response:
@@ -169,7 +169,7 @@ Returns all expenses for the current user.
 ]
 ```
 
-#### 3. **GET api/expense/total**
+#### 3. **GET /api/expense/total**
 Returns the sum of all expenses for the current user.
 
 ```json
@@ -178,9 +178,8 @@ Returns the sum of all expenses for the current user.
 }
 ```
 
-#### 4. **DELETE api/expense/:id**
+#### 4. **DELETE /api/expense/:id**
 Deletes an expense by its ID and returns a 204 status code (No Content).
 
 ## License
 This repository is **not licensed**.
- 
